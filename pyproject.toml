@@ -47,12 +47,6 @@ includes = []
 [tool.setuptools.package-data]
 "*" = ["*.*"]
 
-[tool.pytest.ini_options]
-minversion = "8.0"
-testpaths = [
-    "tests",
-]
-
 [tool.mypy]
 files = "."
 
@@ -99,6 +93,7 @@ ignore = [
     "D",        # docstrings not required in tests
     "ANN",      # type annotations not required in tests (matches mypy override)
     "PLR2004",  # magic values are fine in assertions
+    "INP001",   # tests are collected by pytest, not imported as a package
 ]
 
 [tool.ruff.lint.pydocstyle]

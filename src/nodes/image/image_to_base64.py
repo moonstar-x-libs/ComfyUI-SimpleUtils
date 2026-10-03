@@ -11,9 +11,7 @@ class ImageToBase64:
 
     @classmethod
     def INPUT_TYPES(cls) -> dict:
-        return {
-            "required": {"image": ("IMAGE", {"tooltip": "The image to transform."})}
-        }
+        return {"required": {"image": ("IMAGE", {"tooltip": "The image to transform."})}}
 
     CATEGORY = NODE_CATEGORY
     DESCRIPTION = cleandoc(__doc__)
