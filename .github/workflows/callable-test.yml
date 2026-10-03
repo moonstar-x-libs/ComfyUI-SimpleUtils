@@ -1,0 +1,56 @@
+name: '#Callable - Test'
+
+on:
+  workflow_call:
+    inputs:
+      with_coverage:
+        type: boolean
+        default: false
+    secrets:
+      machine_account_token:
+        required: true
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    env:
+      PYTHONIOENCODING: "utf8"
+
+    steps:
+      - name: Checkout the Repository
+        uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version-file: .python-version
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v10.2.0
+        with:
+          enable-cache: true
+
+      - name: Install Dependencies
+        run: uv sync --all-extras
+
+      - name: Run Linting
+        run: uv run poe lint
+
+      - name: Run Formatter
+        run: uv run poe format
+
+      - name: Run Tests
+        if: ${{ !inputs.with_coverage }}
+        run: uv run poe test
+
+      - name: Run Coverage Tests
+        if: ${{ inputs.with_coverage }}
+        run: uv run poe test-coverage-run && uv run poe test-coverage-lcov
+
+      - name: Report Coverage
+        if: ${{ inputs.with_coverage }}
+        uses: romeovs/lcov-reporter-action@v0.4.0
+        with:
+          lcov-file: lcov.info
+          github-token: ${{ secrets.machine_account_token }}

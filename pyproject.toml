@@ -2,6 +2,15 @@
 requires = ["setuptools>=70.0"]
 build-backend = "setuptools.build_meta"
 
+[tool.poe.tasks]
+lint = "ruff check"
+lint-fix = "ruff check --fix"
+format = "black --check ."
+format-fix = "black ."
+test = "pytest tests"
+test-coverage-run = "uv run coverage run --source=src -m pytest tests"
+test-coverage-lcov = "uv run coverage lcov"
+
 [project]
 name = "ComfyUI-SimpleUtils"
 version = "0.0.1"
@@ -23,11 +32,12 @@ dependencies = [
 dev = [
     "black",
     "bump-my-version",
-    "coverage",  # testing
-    "mypy",  # linting
-    "pre-commit", # runs linting on commit
-    "pytest",  # testing
-    "ruff",  # linting
+    "coverage",
+    "mypy",
+    "pre-commit",
+    "pytest",
+    "ruff",
+    "poethepoet"
 ]
 
 [project.urls]
@@ -101,3 +111,6 @@ convention = "google"
 
 [tool.ruff.lint.flake8-quotes]
 inline-quotes = "double"
+
+[tool.coverage.lcov]
+output = "lcov.info"
