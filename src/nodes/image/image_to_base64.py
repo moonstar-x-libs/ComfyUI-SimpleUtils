@@ -24,7 +24,7 @@ class ImageToBase64:
 
     FUNCTION = "transform"
     RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("base64",)
+    RETURN_NAMES = ("BASE64",)
     OUTPUT_NODE = True
 
     def transform(self, image: Tensor) -> tuple[str]:
