@@ -1,15 +1,15 @@
-from .example_node import Example
+from .image_to_base64 import ImageToBase64
 
 NODE_CLASS_MAPPINGS = {
-    "ExampleNode": Example
+    "SimpleUtilsImageToBase64": ImageToBase64
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "ExampleNode": "Image - ExampleNode"
+    "SimpleUtilsImageToBase64": "Image > ImageToBase64"
 }
 
 __all__ = [
-    "Example",
+    "ImageToBase64",
     "NODE_CLASS_MAPPINGS",
     "NODE_DISPLAY_NAME_MAPPINGS"
 ]

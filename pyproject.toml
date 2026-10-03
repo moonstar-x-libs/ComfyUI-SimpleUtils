@@ -10,15 +10,18 @@ authors = [
   {name = "moonstar-x", email = "christian.lopez99@outlook.com"}
 ]
 readme = "README.md"
-license = {text = "GNU General Public License v3"}
+license = {text = "MIT"}
 requires-python = ">=3.10"
 classifiers = []
 dependencies = [
-
+    "numpy",
+    "pillow",
+    "torch",
 ]
 
 [project.optional-dependencies]
 dev = [
+    "black",
     "bump-my-version",
     "coverage",  # testing
     "mypy",  # linting
@@ -70,13 +73,25 @@ src = ["src", "tests"]
 target-version = "py39"
 
 [tool.ruff.lint]
-select = [
-    "S102",  # exec-builtin
-    "S307",  # eval-used
-    "W293",
-    "F",  # The "F" series in Ruff stands for "Pyflakes" rules, which catch various Python syntax errors and undefined names.
-    # See all rules here: https://docs.astral.sh/ruff/rules/#pyflakes-f
+# Enable every rule Ruff offers, then opt out only of rules that conflict with each other or with the formatter.
+select = ["ALL"]
+ignore = [
+    "D203",    # one-blank-line-before-class (conflicts with D211)
+    "D213",    # multi-line-summary-second-line (conflicts with D212)
+    "COM812",  # missing-trailing-comma (conflicts with the formatter)
+    "ISC001",  # single-line-implicit-string-concatenation (conflicts with the formatter)
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "S101",     # assert is the point of pytest
+    "D",        # docstrings not required in tests
+    "ANN",      # type annotations not required in tests (matches mypy override)
+    "PLR2004",  # magic values are fine in assertions
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.ruff.lint.flake8-quotes]
 inline-quotes = "double"
