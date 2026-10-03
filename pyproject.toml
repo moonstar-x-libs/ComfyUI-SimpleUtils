@@ -1,0 +1,82 @@
+[build-system]
+requires = ["setuptools>=70.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ComfyUI-SimpleUtils"
+version = "0.0.1"
+description = "A collection of simple utility nodes for ComfyUI"
+authors = [
+  {name = "moonstar-x", email = "christian.lopez99@outlook.com"}
+]
+readme = "README.md"
+license = {text = "GNU General Public License v3"}
+requires-python = ">=3.10"
+classifiers = []
+dependencies = [
+
+]
+
+[project.optional-dependencies]
+dev = [
+    "bump-my-version",
+    "coverage",  # testing
+    "mypy",  # linting
+    "pre-commit", # runs linting on commit
+    "pytest",  # testing
+    "ruff",  # linting
+]
+
+[project.urls]
+Repository = "https://github.com/moonstar-x-libs/ComfyUI-SimpleUtils"
+BugTracker = "https://github.com/moonstar-x-libs/ComfyUI-SimpleUtils/issues"
+Documentation = "https://github.com/moonstar-x-libs/ComfyUI-SimpleUtils/wiki"
+
+[tool.comfy]
+PublisherId = "moonstar-x"
+DisplayName = "ComfyUI-SimpleUtils"
+Icon = ""
+Tags = []
+Repository = "https://github.com/moonstar-x-libs/ComfyUI-SimpleUtils"
+
+includes = []
+
+[tool.setuptools.package-data]
+"*" = ["*.*"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = [
+    "tests",
+]
+
+[tool.mypy]
+files = "."
+
+# Use strict defaults
+strict = true
+warn_unreachable = true
+warn_no_return = true
+
+[[tool.mypy.overrides]]
+# Don't require test functions to include types
+module = "tests.*"
+allow_untyped_defs = true
+disable_error_code = "attr-defined"
+
+[tool.ruff]
+line-length = 140
+src = ["src", "tests"]
+target-version = "py39"
+
+[tool.ruff.lint]
+select = [
+    "S102",  # exec-builtin
+    "S307",  # eval-used
+    "W293",
+    "F",  # The "F" series in Ruff stands for "Pyflakes" rules, which catch various Python syntax errors and undefined names.
+    # See all rules here: https://docs.astral.sh/ruff/rules/#pyflakes-f
+]
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "double"
