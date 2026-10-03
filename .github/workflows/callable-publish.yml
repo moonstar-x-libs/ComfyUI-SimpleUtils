@@ -1,0 +1,21 @@
+name: '#Callable - Publish'
+
+on:
+  workflow_call:
+    secrets:
+      comfy_registry_token:
+        required: true
+
+jobs:
+  publish:
+    name: Publish Node
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the Repository
+        uses: actions/checkout@v7
+
+      - name: Publish to Registry
+        uses: Comfy-Org/publish-node-action@main
+        with:
+          personal_access_token: ${{ secrets.comfy_registry_token }}

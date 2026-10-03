@@ -1,0 +1,13 @@
+name: '#Callable - Validate'
+
+on:
+  workflow_call:
+
+jobs:
+  validate:
+    name: Validate Backwards Compatibility
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate
+        uses: comfy-org/node-diff@main
