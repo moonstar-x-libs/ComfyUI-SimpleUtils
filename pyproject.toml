@@ -67,6 +67,9 @@ module = "tests.*"
 allow_untyped_defs = true
 disable_error_code = "attr-defined"
 
+[tool.black]
+target-version = ["py310"]
+
 [tool.ruff]
 line-length = 140
 src = ["src", "tests"]
@@ -80,6 +83,13 @@ ignore = [
     "D213",    # multi-line-summary-second-line (conflicts with D212)
     "COM812",  # missing-trailing-comma (conflicts with the formatter)
     "ISC001",  # single-line-implicit-string-concatenation (conflicts with the formatter)
+    "N999",    # module name is correct
+    "CPY001",  # no need since this project is very simple
+    "D104",    # no need for package-based docstrings
+    "D100",    # no need for module-based docstrings
+    "N802",    # nodes need a INPUT_TYPES method
+    "TID252",  # this project needs to use relative imports to work properly
+    "D102",    # the node's classmethod does not need docs
 ]
 
 [tool.ruff.lint.per-file-ignores]

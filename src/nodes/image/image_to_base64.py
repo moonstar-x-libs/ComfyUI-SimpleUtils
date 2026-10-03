@@ -1,22 +1,18 @@
+from inspect import cleandoc
+
+from torch import Tensor
+
 from ...utils.tensor import img_tensor_to_base64
 from .common import NODE_CATEGORY
-from inspect import cleandoc
-from torch import Tensor
 
 
 class ImageToBase64:
-    """
-    Transform an image to a base64 encoded string.
-    """
+    """Transform an image to a base64 encoded string."""
 
     @classmethod
-    def INPUT_TYPES(cls):
+    def INPUT_TYPES(cls) -> dict:
         return {
-            "required": {
-                "image": ("IMAGE", {
-                    "tooltip": "The image to transform."
-                })
-            }
+            "required": {"image": ("IMAGE", {"tooltip": "The image to transform."})}
         }
 
     CATEGORY = NODE_CATEGORY
