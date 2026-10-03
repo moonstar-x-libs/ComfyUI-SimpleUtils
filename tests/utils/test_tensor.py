@@ -14,23 +14,6 @@ IMAGE_WIDTH = 6
 
 
 @pytest.fixture
-def rgb_array() -> np.ndarray:
-    rng = np.random.default_rng(seed=1234)
-    return rng.integers(0, 256, size=(IMAGE_HEIGHT, IMAGE_WIDTH, 3), dtype=np.uint8)
-
-
-@pytest.fixture
-def rgb_base64(rgb_array: np.ndarray, encode_pil_image: Callable[..., str]) -> str:
-    """The base64 PNG encoding of ``rgb_array``."""
-    return encode_pil_image(Image.fromarray(rgb_array, mode="RGB"))
-
-
-@pytest.fixture
-def img_tensor(rgb_array: np.ndarray) -> torch.Tensor:
-    return torch.from_numpy(rgb_array.astype(np.float32) / 255.0)
-
-
-@pytest.fixture
 def decode_to_pil_image() -> Callable[[str], Image.Image]:
     def _decode(img_base64: str) -> Image.Image:
         return Image.open(io.BytesIO(base64.b64decode(img_base64)))
@@ -40,14 +23,28 @@ def decode_to_pil_image() -> Callable[[str], Image.Image]:
 
 @pytest.fixture
 def encode_pil_image() -> Callable[..., str]:
-    """Return a helper that encodes a PIL image as a base64 string."""
-
     def _encode(img: Image.Image, img_format: str = "PNG") -> str:
         buffer = io.BytesIO()
         img.save(buffer, format=img_format)
         return base64.b64encode(buffer.getvalue()).decode("utf-8")
 
     return _encode
+
+
+@pytest.fixture
+def rgb_array() -> np.ndarray:
+    rng = np.random.default_rng(seed=1234)
+    return rng.integers(0, 256, size=(IMAGE_HEIGHT, IMAGE_WIDTH, 3), dtype=np.uint8)
+
+
+@pytest.fixture
+def rgb_base64(rgb_array: np.ndarray, encode_pil_image: Callable[..., str]) -> str:
+    return encode_pil_image(Image.fromarray(rgb_array, mode="RGB"))
+
+
+@pytest.fixture
+def img_tensor(rgb_array: np.ndarray) -> torch.Tensor:
+    return torch.from_numpy(rgb_array.astype(np.float32) / 255.0)
 
 
 class TestImgTensorToBase64:
