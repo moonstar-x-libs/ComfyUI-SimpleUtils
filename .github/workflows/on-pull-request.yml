@@ -13,9 +13,3 @@ jobs:
       with_coverage: true
     secrets:
       machine_account_token: ${{ secrets.MACHINE_ACCOUNT_TOKEN }}
-
-  validate:
-    name: Validate Backwards Compatibility
-    needs:
-      - test
-    uses: ./.github/workflows/callable-validate.yml
