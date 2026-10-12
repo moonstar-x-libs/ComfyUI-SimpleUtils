@@ -18,6 +18,18 @@ All nodes live under the **SimpleUtils** category in the node menu.
 - **Base64ToImage** expects a raw base64 string, without a `data:image/...;base64,` prefix. Any format Pillow can read is accepted. The image is always converted to RGB, so alpha channels are discarded.
 - **ImageToBase64** encodes only the **first** image of the incoming batch. The output is a raw PNG base64 string with no data URI prefix.
 
+### Audio
+
+| Node | Inputs | Outputs | Description |
+| --- | --- | --- | --- |
+| **Audio > Base64ToAudio** | `base64` (`STRING`) | `AUDIO` (`AUDIO`) | Decodes a base64 encoded WAV string into an audio. |
+| **Audio > AudioToBase64** | `audio` (`AUDIO`) | `BASE64` (`STRING`) | Encodes an audio into a base64 string (16-bit PCM WAV). |
+
+#### Notes
+
+- **Base64ToAudio** expects a raw base64 string, without a `data:audio/...;base64,` prefix. Only uncompressed PCM WAV (8, 16, 24 or 32-bit integer) is accepted.
+- **AudioToBase64** encodes only the **first** audio of the incoming batch. Samples are clamped to `[-1, 1]` and written as 16-bit PCM WAV with no data URI prefix.
+
 ## Installation
 
 ### ComfyUI Manager / Comfy Registry
@@ -71,8 +83,9 @@ uv run pre-commit install
 ├── src
 │   ├── node_mappings.py     # Aggregates the mappings of every node group
 │   ├── nodes
+│   │   ├── audio            # Audio nodes and their mappings
 │   │   └── image            # Image nodes and their mappings
-│   └── utils                # Shared helpers (e.g. tensor <-> base64 conversion)
+│   └── utils                # Shared helpers (e.g. tensor/audio <-> base64 conversion)
 └── tests                    # pytest suite, mirroring the src layout
 ```
 
