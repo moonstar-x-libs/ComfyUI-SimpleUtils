@@ -18,6 +18,18 @@ All nodes live under the **SimpleUtils** category in the node menu.
 - **Base64ToImage** expects a raw base64 string, without a `data:image/...;base64,` prefix. Any format Pillow can read is accepted. The image is always converted to RGB, so alpha channels are discarded.
 - **ImageToBase64** encodes only the **first** image of the incoming batch. The output is a raw PNG base64 string with no data URI prefix.
 
+### Audio
+
+| Node | Inputs | Outputs | Description |
+| --- | --- | --- | --- |
+| **Audio > Base64ToAudio** | `base64` (`STRING`) | `AUDIO` (`AUDIO`) | Decodes a base64 encoded audio string into an audio. |
+| **Audio > AudioToBase64** | `audio` (`AUDIO`), `format` (`wav` / `flac` / `mp3` / `opus`) | `BASE64` (`STRING`) | Encodes an audio into a base64 string in the selected format. |
+
+#### Notes
+
+- **Base64ToAudio** expects a raw base64 string, without a `data:audio/...;base64,` prefix. Decoding is done with [PyAV](https://github.com/PyAV-Org/PyAV), so any audio format FFmpeg can read is accepted (WAV, FLAC, MP3, Ogg/Opus, AAC/M4A, etc.). Only the first audio stream is used, and the sample rate and channels are preserved.
+- **AudioToBase64** encodes only the **first** audio of the incoming batch, with no data URI prefix. Samples are clamped to `[-1, 1]`. `wav` is 16-bit PCM, `flac` is lossless, `mp3` keeps the input sample rate (which must be one MP3 supports, e.g. 16, 22.05, 44.1 or 48 kHz), and `opus` is an Ogg file resampled to 48 kHz.
+
 ## Installation
 
 ### ComfyUI Manager / Comfy Registry
@@ -37,7 +49,7 @@ cd ComfyUI/custom_nodes
 git clone https://github.com/moonstar-x-libs/ComfyUI-SimpleUtils.git
 ```
 
-The only dependencies are `numpy`, `pillow` and `torch`, which ComfyUI already ships with.
+The only dependencies are `av`, `numpy`, `pillow` and `torch`, which ComfyUI already ships with.
 
 ## Development
 
@@ -71,8 +83,9 @@ uv run pre-commit install
 ├── src
 │   ├── node_mappings.py     # Aggregates the mappings of every node group
 │   ├── nodes
+│   │   ├── audio            # Audio nodes and their mappings
 │   │   └── image            # Image nodes and their mappings
-│   └── utils                # Shared helpers (e.g. tensor <-> base64 conversion)
+│   └── utils                # Shared helpers (e.g. tensor/audio <-> base64 conversion)
 └── tests                    # pytest suite, mirroring the src layout
 ```
 
