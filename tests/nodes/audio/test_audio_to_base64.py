@@ -2,6 +2,7 @@ import base64
 import io
 import wave
 
+import av
 import numpy as np
 import pytest
 import torch
@@ -40,10 +41,15 @@ class TestAudioToBase64Definition:
         input_types = AudioToBase64.INPUT_TYPES()
 
         assert list(input_types) == ["required"]
-        assert list(input_types["required"]) == ["audio"]
+        assert list(input_types["required"]) == ["audio", "format"]
 
         input_type, options = input_types["required"]["audio"]
         assert input_type == "AUDIO"
+        assert "tooltip" in options
+
+        formats, options = input_types["required"]["format"]
+        assert formats == ["wav", "flac", "mp3", "opus"]
+        assert options["default"] == "wav"
         assert "tooltip" in options
 
     def test_node_metadata(self):
@@ -71,7 +77,7 @@ class TestAudioToBase64Transform:
         assert isinstance(result, str)
         base64.b64decode(result, validate=True)
 
-    def test_encodes_as_16_bit_wav(self, node, audio):
+    def test_encodes_as_16_bit_wav_by_default(self, node, audio):
         (result,) = node.transform(audio)
         wav_file, _ = read_wav(result)
 
@@ -80,11 +86,22 @@ class TestAudioToBase64Transform:
         assert wav_file.getframerate() == SAMPLE_RATE
         assert wav_file.getnframes() == SAMPLES
 
+    @pytest.mark.parametrize(
+        ("audio_format", "container_format"),
+        [("wav", "wav"), ("flac", "flac"), ("mp3", "mp3"), ("opus", "ogg")],
+    )
+    def test_encodes_in_selected_format(self, node, audio, audio_format, container_format):
+        (result,) = node.transform(audio, audio_format)
+
+        with av.open(io.BytesIO(base64.b64decode(result))) as container:
+            assert container.format.name == container_format
+            assert container.streams.audio[0].channels == CHANNELS
+
     def test_preserves_sample_values(self, node, audio, waveform):
         (result,) = node.transform(audio)
         _, frames = read_wav(result)
 
-        np.testing.assert_allclose(frames / 32767.0, waveform[0].numpy(), atol=1 / 32767.0)
+        np.testing.assert_allclose(frames / 32768.0, waveform[0].numpy(), atol=1 / 32768.0)
 
     def test_only_encodes_first_audio_of_batch(self, node):
         batch = torch.stack([torch.zeros((CHANNELS, SAMPLES)), torch.ones((CHANNELS, SAMPLES))])

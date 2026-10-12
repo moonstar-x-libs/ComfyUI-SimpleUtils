@@ -3,11 +3,13 @@ import binascii
 import io
 import wave
 
+import av
 import numpy as np
 import pytest
 import torch
 from src.nodes.audio.base64_to_audio import Base64ToAudio
 from src.nodes.audio.common import NODE_CATEGORY
+from src.utils.audio import AUDIO_FORMATS, audio_tensor_to_base64
 
 SAMPLE_RATE = 8000
 CHANNELS = 2
@@ -82,12 +84,21 @@ class TestBase64ToAudioTransform:
         expected = torch.from_numpy((pcm_array.astype(np.float32) / 32768.0).T.copy())
         torch.testing.assert_close(audio["waveform"][0], expected)
 
+    @pytest.mark.parametrize("audio_format", list(AUDIO_FORMATS))
+    def test_decodes_supported_formats(self, node, audio_format):
+        waveform = torch.zeros((CHANNELS, 16000))
+        (audio,) = node.transform(audio_tensor_to_base64(waveform, 16000, audio_format))
+
+        assert audio["waveform"].dtype == torch.float32
+        assert audio["waveform"].shape[:2] == (1, CHANNELS)
+        assert audio["sample_rate"] == AUDIO_FORMATS[audio_format].sample_rate or 16000
+
     def test_invalid_base64_raises(self, node):
         with pytest.raises(binascii.Error):
             node.transform("not-valid-base64!")
 
-    def test_non_wav_data_raises(self, node):
-        not_a_wav = base64.b64encode(b"definitely not a wav file").decode("utf-8")
+    def test_non_audio_data_raises(self, node):
+        not_audio = base64.b64encode(b"definitely not an audio file").decode("utf-8")
 
-        with pytest.raises(wave.Error):
-            node.transform(not_a_wav)
+        with pytest.raises(av.error.InvalidDataError):
+            node.transform(not_audio)
