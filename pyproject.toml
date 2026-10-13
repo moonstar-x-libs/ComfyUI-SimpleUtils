@@ -13,7 +13,7 @@ test-coverage-lcov = "uv run coverage lcov"
 
 [project]
 name = "ComfyUI-SimpleUtils"
-version = "0.0.2"
+version = "0.0.3"
 description = "A collection of simple utility nodes for ComfyUI"
 authors = [
   {name = "moonstar-x", email = "christian.lopez99@outlook.com"}
