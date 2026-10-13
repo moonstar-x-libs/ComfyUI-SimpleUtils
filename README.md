@@ -30,6 +30,17 @@ All nodes live under the **SimpleUtils** category in the node menu.
 - **Base64ToAudio** expects a raw base64 string, without a `data:audio/...;base64,` prefix. Decoding is done with [PyAV](https://github.com/PyAV-Org/PyAV), so any audio format FFmpeg can read is accepted (WAV, FLAC, MP3, Ogg/Opus, AAC/M4A, etc.). Only the first audio stream is used, and the sample rate and channels are preserved.
 - **AudioToBase64** encodes only the **first** audio of the incoming batch, with no data URI prefix. Samples are clamped to `[-1, 1]`. `wav` is 16-bit PCM, `flac` is lossless, `mp3` keeps the input sample rate (which must be one MP3 supports, e.g. 16, 22.05, 44.1 or 48 kHz), and `opus` is an Ogg file resampled to 48 kHz.
 
+### Filesystem
+
+| Node | Inputs | Outputs | Description |
+| --- | --- | --- | --- |
+| **Filesystem > DeleteInputFile** | `filename` (dropdown), `passthrough` (any, optional) | `PASSTHROUGH` (any) | Deletes a file from ComfyUI's input directory. |
+
+#### Notes
+
+- **DeleteInputFile** offers a dropdown of every file in ComfyUI's input directory, including subdirectories (e.g. `nested/image.png`). The list is refreshed when the node definitions are reloaded (e.g. with the *Refresh* button). The `filename` is resolved relative to the input directory. Paths that resolve outside the input directory, including `..` segments, absolute paths and symlinks pointing elsewhere, are rejected. An error is raised if the file does not exist or is a directory.
+- The optional `passthrough` accepts any type and is returned unchanged (`None` if nothing is connected). Use it to control execution order: connect the output of the node that reads the file (e.g. `LoadImage`) to delete the file only after it has been loaded, and chain `PASSTHROUGH` into downstream nodes that should only run once the file is gone.
+
 ## Installation
 
 ### ComfyUI Manager / Comfy Registry
@@ -84,6 +95,7 @@ uv run pre-commit install
 │   ├── node_mappings.py     # Aggregates the mappings of every node group
 │   ├── nodes
 │   │   ├── audio            # Audio nodes and their mappings
+│   │   ├── filesystem       # Filesystem nodes and their mappings
 │   │   └── image            # Image nodes and their mappings
 │   └── utils                # Shared helpers (e.g. tensor/audio <-> base64 conversion)
 └── tests                    # pytest suite, mirroring the src layout
