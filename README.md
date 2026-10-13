@@ -34,11 +34,11 @@ All nodes live under the **SimpleUtils** category in the node menu.
 
 | Node | Inputs | Outputs | Description |
 | --- | --- | --- | --- |
-| **Filesystem > DeleteInputFile** | `filename` (`STRING`), `passthrough` (any, optional) | `PASSTHROUGH` (any) | Deletes a file from ComfyUI's input directory. |
+| **Filesystem > DeleteInputFile** | `filename` (dropdown), `passthrough` (any, optional) | `PASSTHROUGH` (any) | Deletes a file from ComfyUI's input directory. |
 
 #### Notes
 
-- **DeleteInputFile** resolves `filename` relative to ComfyUI's input directory (subdirectories such as `nested/image.png` are allowed). Paths that resolve outside the input directory, including `..` segments, absolute paths and symlinks pointing elsewhere, are rejected. An error is raised if the file does not exist or is a directory.
+- **DeleteInputFile** offers a dropdown of every file in ComfyUI's input directory, including subdirectories (e.g. `nested/image.png`). The list is refreshed when the node definitions are reloaded (e.g. with the *Refresh* button). The `filename` is resolved relative to the input directory. Paths that resolve outside the input directory, including `..` segments, absolute paths and symlinks pointing elsewhere, are rejected. An error is raised if the file does not exist or is a directory.
 - The optional `passthrough` accepts any type and is returned unchanged (`None` if nothing is connected). Use it to control execution order: connect the output of the node that reads the file (e.g. `LoadImage`) to delete the file only after it has been loaded, and chain `PASSTHROUGH` into downstream nodes that should only run once the file is gone.
 
 ## Installation

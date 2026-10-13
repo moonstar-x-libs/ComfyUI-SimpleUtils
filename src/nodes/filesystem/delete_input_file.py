@@ -2,7 +2,7 @@ from inspect import cleandoc
 from typing import Any
 
 from ...utils.any_type import ANY_TYPE
-from ...utils.filesystem import resolve_input_file
+from ...utils.filesystem import list_input_files, resolve_input_file
 from .common import NODE_CATEGORY
 
 
@@ -17,8 +17,8 @@ class DeleteInputFile:
         return {
             "required": {
                 "filename": (
-                    "STRING",
-                    {"tooltip": "The name of the file to delete, relative to the input directory."},
+                    list_input_files(),
+                    {"tooltip": "The file to delete, relative to the input directory."},
                 )
             },
             "optional": {

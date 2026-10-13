@@ -18,7 +18,8 @@ def node() -> DeleteInputFile:
 
 
 class TestDeleteInputFileDefinition:
-    def test_input_types(self):
+    def test_input_types(self, input_directory):
+        (input_directory / "image.png").write_bytes(b"data")
         input_types = DeleteInputFile.INPUT_TYPES()
 
         assert list(input_types) == ["required", "optional"]
@@ -26,12 +27,21 @@ class TestDeleteInputFileDefinition:
         assert list(input_types["optional"]) == ["passthrough"]
 
         input_type, options = input_types["required"]["filename"]
-        assert input_type == "STRING"
+        assert input_type == ["image.png"]
         assert "tooltip" in options
 
         input_type, options = input_types["optional"]["passthrough"]
         assert input_type is ANY_TYPE
         assert "tooltip" in options
+
+    def test_filename_options_reflect_input_directory(self, input_directory):
+        assert DeleteInputFile.INPUT_TYPES()["required"]["filename"][0] == []
+
+        (input_directory / "b.png").write_bytes(b"data")
+        (input_directory / "nested").mkdir()
+        (input_directory / "nested" / "a.png").write_bytes(b"data")
+
+        assert DeleteInputFile.INPUT_TYPES()["required"]["filename"][0] == ["b.png", "nested/a.png"]
 
     def test_node_metadata(self):
         assert DeleteInputFile.CATEGORY == NODE_CATEGORY

@@ -30,3 +30,18 @@ def resolve_input_file(filename: str) -> Path:
         raise ValueError(msg)
 
     return path
+
+
+def list_input_files() -> list[str]:
+    """List the files inside ComfyUI's input directory, including subdirectories.
+
+    Paths are returned sorted, relative to the input directory and with forward slashes.
+    Files whose resolved path is outside the input directory (e.g. symlinks pointing elsewhere) are skipped.
+    """
+    input_directory = get_input_directory()
+
+    return sorted(
+        path.relative_to(input_directory).as_posix()
+        for path in input_directory.rglob("*")
+        if path.is_file() and path.resolve().is_relative_to(input_directory)
+    )
